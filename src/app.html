@@ -1,9 +1,44 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-color="teal" data-theme="light">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="text-scale" content="scale" />
+		<script>
+			(() => {
+				const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+				const normalize = (value) => (['dark', 'light', 'os'].includes(value) ? value : 'os');
+				let preference = 'os';
+				try {
+					preference = normalize(localStorage.getItem('theme'));
+				} catch {
+					// Follow the OS when browser storage is unavailable.
+				}
+				const updateTheme = () => {
+					document.documentElement.dataset.themePreference = preference;
+					document.documentElement.dataset.theme =
+						preference === 'os' ? (systemTheme.matches ? 'dark' : 'light') : preference;
+					window.dispatchEvent(new Event('theme-preference-updated'));
+				};
+				window.addEventListener('theme-preference-change', (event) => {
+					preference = normalize(event.detail);
+					try {
+						localStorage.setItem('theme', preference);
+					} catch {
+						// The selection still works for this visit without persistence.
+					}
+					updateTheme();
+				});
+				window.addEventListener('storage', (event) => {
+					if (event.key === 'theme' || event.key === null) {
+						preference = normalize(event.newValue);
+						updateTheme();
+					}
+				});
+				updateTheme();
+				systemTheme.addEventListener('change', updateTheme);
+			})();
+		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

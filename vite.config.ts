@@ -4,6 +4,8 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+	// Sveltewind imports Lucide's source Svelte components through its barrel export.
+	ssr: { noExternal: ['@lucide/svelte'] },
 	plugins: [
 		tailwindcss(),
 		sveltekit({
@@ -13,8 +15,7 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true,
 				experimental: { async: true }
 			},
-			adapter: adapter(),
-			experimental: { remoteFunctions: true }
+			adapter: adapter()
 		})
 	]
 });
