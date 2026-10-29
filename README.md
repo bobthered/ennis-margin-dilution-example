@@ -21,6 +21,9 @@ Open the local URL printed by Vite. On Windows PowerShell with script execution 
 - Compare reported margins visually or open **P&L details** for both plants under both methods.
 - Use **Price each plant's contribution at goal** to calculate the customer price and split from the separate plant targets.
 - Export the current inputs and P&Ls as CSV.
+- Share the current scenario by copying the browser URL. All six numeric inputs, the selected example, and the comparison view update automatically in the search parameters and are restored when the link is opened or refreshed.
+
+For example, `/?producerCost=70000&sellerCost=35000&producerGoal=30&sellerGoal=30&customerPrice=180000&producerRevenue=110000&preset=custom&view=table` opens a custom scenario in P&L details. Omitted inputs use the selected example (manufacturing by default); an empty value preserves a cleared input. Slider changes are saved through `producerRevenue`, which determines the profit split.
 
 The goal inputs are benchmarks until the pricing action is used; changing a target alone does not change the customer price or profit allocation.
 

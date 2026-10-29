@@ -1,4 +1,8 @@
 ﻿<script lang="ts">
+	import { untrack } from 'svelte';
+	import { page } from '$app/state';
+	import { replaceState } from '$app/navigation';
+	import { readScenarioParams, writeScenarioParams } from '#lib/scenario-url.ts';
 	import {
 		A,
 		Accordion,
@@ -47,6 +51,31 @@
 	let scenario: Scenario = $state({ ...examples.manufacturing });
 	let preset = $state('manufacturing');
 	let view = $state<'visual' | 'table'>('visual');
+	let urlReady = $state(false);
+
+	$effect(() => {
+		const restored = readScenarioParams(page.url.searchParams);
+		untrack(() => {
+			scenario = restored.scenario;
+			preset = restored.preset;
+			view = restored.view;
+			urlReady = true;
+		});
+	});
+
+	$effect(() => {
+		if (!urlReady) return;
+		const state = { scenario: { ...scenario }, preset, view };
+		untrack(() => {
+			const current = new URL(window.location.href);
+			const next = writeScenarioParams(current, state);
+			if (next.href !== current.href) {
+				// The URL already includes the base path from window.location.
+				// eslint-disable-next-line svelte/no-navigation-without-resolve
+				void replaceState(next, page.state);
+			}
+		});
+	});
 	const errors = $derived(validateScenario(scenario));
 	const result = $derived(calculateScenario(scenario));
 	const pnlRows = $derived(
